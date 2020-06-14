@@ -1,0 +1,48 @@
+##Tabelas Usuarios
+id
+nome
+email
+senha
+token
+
+##Tabela Empresas
+id
+nome
+cnpj
+
+##Tabela Receitas##
+id
+valor
+data
+id_tipo_receita
+
+##Tabela TiposReceita##
+id
+nome
+id_empresa
+
+##Tabela ReceitasDelivery
+id
+id_info_delivery
+valor
+data
+
+##Tabela InfosDelivery
+id
+nome
+taxa_cobrada
+data_pagamento
+data_inicio
+id_empresa
+
+##Tabela Despesas
+id
+status
+data
+data_pagamento
+id_fornecedor
+id_classificacao
+id_forma_de_pagamento
+cobranca
+forma de pagamento
+valor

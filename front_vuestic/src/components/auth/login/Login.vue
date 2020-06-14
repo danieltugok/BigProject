@@ -1,0 +1,96 @@
+<template>
+  <form @submit.prevent="onsubmit">
+    <va-input
+      v-model="email"
+      type="text"
+      :label="$t('auth.email')"
+      :error="!!emailErrors.length"
+      :error-messages="emailErrors"
+    />
+    
+    <va-input
+      v-model="password"
+      type="password"
+      :label="$t('auth.password')"
+      :error="!!passwordErrors.length"
+      :error-messages="passwordErrors"
+    />
+
+    <div class="auth-layout__options d-flex align--center justify--space-between">
+      <va-checkbox v-model="keepLoggedIn" class="mb-0" :label="$t('auth.keep_logged_in')"/>
+      <router-link class="ml-1 link" :to="{name: 'recover-password'}">{{$t('auth.recover_password')}}</router-link>
+    </div>
+
+    <div class="d-flex justify--center mt-3">
+      <va-button type="submit" class="my-0">{{ $t('auth.login') }}</va-button>
+    </div>
+  </form>
+  
+</template>
+
+
+
+<script>
+//import { requireLogin } from '../../global/mixins/RequireLogin'
+import { toastNotifiable } from '../../global/mixins/ToastNotifiable'
+import { mapGetters, mapActions } from "vuex";
+
+export default {
+
+  // mixins: [toastNotifiable, requireLogin],
+  mixins: [toastNotifiable],
+
+  name: 'login',
+  data () {
+    return {
+      email: '',
+      password: '',
+      keepLoggedIn: false,
+      emailErrors: [],
+      passwordErrors: [],
+      users: []
+    }
+  },
+  computed: {
+    formReady () {
+      return !this.emailErrors.length && !this.passwordErrors.length
+    },
+    ...mapGetters([
+          'authenticating',
+          'authenticationError',
+          'authenticationErrorCode',
+          'loggedIn'
+      ]),
+  },
+  
+  methods: {
+    ...mapActions([
+          'login'
+      ]),
+    onsubmit () {
+      this.emailErrors = this.email ? [] : ['Email is required']
+      this.passwordErrors = this.password ? [] : ['Password is required']
+      if (!this.formReady) {
+        return
+      }
+      this.ReqLogin()
+    },
+
+    ReqLogin () {
+      this.login({email: this.email, password: this.password}).then(()=>{
+        if(this.authenticationErrorCode === 401 && !this.loggedIn){
+          for(let e of Object.values(this.authenticationError)){
+            this.showNotificationError(e);
+          }
+        }else if(this.authenticationErrorCode === 500){
+          console.log('No response')
+        }
+      });
+    }
+
+  },
+}
+</script>
+
+<style lang="scss">
+</style>
